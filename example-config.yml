@@ -1,0 +1,16 @@
+
+---
+# Sensitive Credentials
+ACCESS_TOKEN: 377axxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GOOGLE_CREDS: ewogIxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Google Sheets Vars
+SPREADSHEET_ID: 1MQOxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+## Sheet names
+SHEET#1: "Sheet Name # 1"
+SHEET#2: "Sheet Name # 2"
+SHEET#3: "Sheet Name # 3"
+
+# GraphQL Vars
+START_DATE: "YYYY-MM-DD"
+END_DATE: "YYYY-MM-DD"
