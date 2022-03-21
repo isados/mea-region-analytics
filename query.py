@@ -14,13 +14,16 @@ def read_gql_fromfile(name, folder="query"):
 
 async def _run_query(query, params):
     # Create a GraphQL client 
-    print("Executing query ...")
     access_token = '00afef60b26308fa2c58de8fa0831984db710a8302a336c293bbd6202e6cf0ac' 
     transport = AIOHTTPTransport(url=f"https://gis-api.aiesec.org/graphql/?access_token={access_token}")
     async with Client(transport=transport, fetch_schema_from_transport=True) as session:
         # Execute query
         # results = await session.execute(query, variable_values=params)
-        results = await session.execute(query)
+        try:
+            results = await session.execute(query)
+        except asyncio.exceptions.TimeoutError:
+            print('Oops! Timeout with the server. Will try again...')
+            results = await session.execute(query)
         return results
 
 def run_query(query, params=None):

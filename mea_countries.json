@@ -1,4 +1,4 @@
-	{"data":	[
+	{"all":	[
 								{
 									"name": "Algeria",
 									"id": "457"
@@ -167,5 +167,120 @@
 									"name": "Zimbabwe",
 									"id": "2417"
 								}
-							]
+							],
+	"relevant": [
+								{
+									"name": "Algeria",
+									"id": "457"
+								},
+								{
+									"name": "Bahrain",
+									"id": "518"
+								},
+								{
+									"name": "Benin",
+									"id": "459"
+								},
+								{
+									"name": "Burkina Faso",
+									"id": "180"
+								},
+								{
+									"name": "Cabo Verde",
+									"id": "29"
+								},
+								{
+									"name": "Cameroon",
+									"id": "1581"
+								},
+								{
+									"name": "Cote D'Ivoire",
+									"id": "1537"
+								},
+								{
+									"name": "Egypt",
+									"id": "1609"
+								},
+								{
+									"name": "Ethiopia",
+									"id": "476"
+								},
+								{
+									"name": "Ghana",
+									"id": "1568"
+								},
+								{
+									"name": "Jordan",
+									"id": "530"
+								},
+								{
+									"name": "Kenya",
+									"id": "1617"
+								},
+								{
+									"name": "Kuwait",
+									"id": "56"
+								},
+								{
+									"name": "Lebanon",
+									"id": "182"
+								},
+								{
+									"name": "Liberia",
+									"id": "219"
+								},
+								{
+									"name": "Malawi",
+									"id": "1709"
+								},
+								{
+									"name": "Morocco",
+									"id": "1552"
+								},
+								{
+									"name": "Mozambique",
+									"id": "1574"
+								},
+								{
+									"name": "Namibia",
+									"id": "78"
+								},
+								{
+									"name": "Nigeria",
+									"id": "1578"
+								},
+								{
+									"name": "Rwanda",
+									"id": "506"
+								},
+								{
+									"name": "Senegal",
+									"id": "1605"
+								},
+								{
+									"name": "South Africa",
+									"id": "1545"
+								},
+								{
+									"name": "Tanzania",
+									"id": "567"
+								},
+								{
+									"name": "Togo",
+									"id": "1543"
+								},
+								{
+									"name": "Tunisia",
+									"id": "1559"
+								},
+								{
+									"name": "Uganda",
+									"id": "1602"
+								},
+								{
+									"name": "United Arab Emirates",
+									"id": "1625"
+								}
+
+	]
 						}
