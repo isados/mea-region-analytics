@@ -4,10 +4,10 @@ import pandas as pd
 
 from query import run_query
 
-# {"name": "MEA", "id": "1632"},
+## DATA Definition
 months = {'Jan': 1,
-'Feb': 2,
-'Mar': 3,
+# 'Feb': 2,
+# 'Mar': 3,
 # 'Apr': 4,
 # 'May': 5,
 # 'Jun': 6,
@@ -19,6 +19,7 @@ months = {'Jan': 1,
 # 'Dec': 12
 }
 
+# {"name": "MEA", "id": "1632"},
 with open('mea_countries.json') as file:
     countries = json.load(file)['relevant']
 
@@ -94,7 +95,7 @@ def execute_queries(sub_queries, limit=400):
     print(f'Time Taken for query: {time.perf_counter()-start:0.4f} seconds')
     return result
 
-if __name__ == '__main__':
+def get():
     queries = form_subqueries()
     data = execute_queries(queries)
 
@@ -121,4 +122,8 @@ if __name__ == '__main__':
                         res_df.loc[len(res_df.index)] = row
                     except ValueError as e:
                         print(e, f'These are the headers:{cols}\n and values that caused it: {row}')
-    print(res_df)
+    return res_df
+
+if __name__ == '__main__':
+    df = get()
+    print(df)
