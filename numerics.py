@@ -33,7 +33,7 @@ incoming = {True: 'opportunity_home_mc', False: 'person_home_mc'}
 
 kpis = {
     'APP': 'created_at',
-    'ACC': 'date_matched',
+    'ACC': 'date_an_signed',
     'APD': 'date_approved',
     'RE': 'date_realized'
 }
