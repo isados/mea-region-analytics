@@ -12,6 +12,7 @@ gql = "==3.0.0a5"
 aiohttp = "*"
 
 [dev-packages]
+ipykernel = "*"
 
 [requires]
 python_version = "3.8"
