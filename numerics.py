@@ -1,6 +1,7 @@
 import time
 import json
 import pandas as pd
+import numpy as np
 
 from query import run_query
 
@@ -25,8 +26,8 @@ with open('mea_countries.json') as file:
 
 programs = {
     'GTe': 9,
-    'GTa': 8,
-    'GV': 7
+    # 'GTa': 8,
+    # 'GV': 7
 }
 
 incoming = {True: 'opportunity_home_mc', False: 'person_home_mc'}
@@ -123,6 +124,17 @@ def get():
                     except ValueError as e:
                         print(e, f'These are the headers:{cols}\n and values that caused it: {row}')
     return res_df
+
+def getcrs(df):
+    kpi_cols =  list(kpis.keys())
+    for index in range(len(kpi_cols[:-1])):
+        current = kpi_cols[index]
+        nxt = kpi_cols[index+1]
+        df[f'{current}-{nxt} %'] = df[nxt]/df[current]
+    df.drop(kpi_cols, axis=1, inplace=True)
+    df.fillna(0, inplace=True)
+    df.replace([np.inf, -np.inf], 0, inplace=True)
+    return df
 
 if __name__ == '__main__':
     df = get()

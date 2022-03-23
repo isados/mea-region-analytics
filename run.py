@@ -26,6 +26,7 @@ def main():
     set_worksheet_todf = partial(pygsheets.Worksheet.set_dataframe, start="A1", copy_head=True)
 
     if 'covid' in RUN_THESE:
+        print('# Updating COVID Sheet #')
         ## Get COVID Data
         owid = pd.read_csv('https://github.com/owid/covid-19-data/raw/master/public/data/latest/owid-covid-latest.csv', low_memory=False)
         text_cols = ['location']
@@ -46,11 +47,16 @@ def main():
         set_worksheet_todf(owid_covid_sheet, owid)
 
     if 'numbers' in RUN_THESE:
+        print('# Updating Performance Analytics Sheet #')
         perf_df = numerics.get()
+        crs_df = numerics.getcrs(perf_df.copy())
         perf_sheet = workbook.worksheet_by_title(os.environ["PerformanceSheet"])
+        crs_sheet = workbook.worksheet_by_title(os.environ["ConversionsSheet"])
         perf_sheet.clear()
+        crs_sheet.clear()
         ### Push it to Google Sheets
         set_worksheet_todf(perf_sheet, perf_df)
+        set_worksheet_todf(crs_sheet, crs_df)
 
     print("Done!")
 

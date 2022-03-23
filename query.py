@@ -1,7 +1,5 @@
 import os
-import pandas as pd
 import asyncio
-from functools import partial
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 
