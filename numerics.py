@@ -99,14 +99,13 @@ def execute_queries(sub_queries, limit=400):
 def get():
     queries = form_subqueries()
     data = execute_queries(queries)
+    data_np = np.array(data)
+    data_np = data_np.reshape((-1, len(kpis.keys())))
+    # print('Shape', data_np.shape)
+    # print(data_np)
 
-    def get_kpis_values():
-        num_kpis = len(kpis.keys())
-        for x in range(0, len(data), num_kpis):
-            yield data[x: x+num_kpis]
-    kpi_data = get_kpis_values()
 
-    cols = ['month', 'mc', 'department', *kpis.keys()]
+    cols = ['month', 'mc', 'department']
     res_df = pd.DataFrame(columns=cols)
 
     for month_str in months.keys():
@@ -118,11 +117,11 @@ def get():
 
                     # Build Row
                     row = [month_str, mc['name'], dept]
-                    row += next(kpi_data) # Add numerics
                     try:
                         res_df.loc[len(res_df.index)] = row
                     except ValueError as e:
                         print(e, f'These are the headers:{cols}\n and values that caused it: {row}')
+    res_df.loc[:, [*kpis.keys()]] = data_np
     return res_df
 
 def getcrs(df):
