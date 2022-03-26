@@ -39,8 +39,14 @@ kpis = {
     'APP': 'created_at',
     'ACC': 'date_an_signed',
     'APD': 'date_approved',
-    'RE': 'date_realized'
+    'RE': 'date_realized',
 }
+
+proc_times = {
+    'APP-ACC Days': 'an_signed_at',
+    'ACC-APD Days': 'date_approved',
+    'APD-RE Days': 'date_realized'
+    }
 
 ## Building Query (by forming sub-queries)
 def get_request_clause(date_field:str):
@@ -50,7 +56,7 @@ def get_request_clause(date_field:str):
                 total_items
             }
     """ 
-    date_fields = ['created_at', 'an_signed_at', 'date_approved', 'date_realized']
+    date_fields = ['created_at'] + list(proc_times.values())
     if date_field == "created_at":
         return basic_clause + "\n}"
     if date_field == "date_an_signed":
@@ -67,7 +73,7 @@ def get_request_clause(date_field:str):
     }
     """ % (basic_clause, request_dates)
     
-def _dateform(date_str):
+def _parsedates(date_str):
     """ Date2 - Date1 in days"""
     date_str = date_str[:-1] # Remove Timezone code
     return  datetime.fromisoformat(date_str)
@@ -77,7 +83,7 @@ def _avgdays_btwn(dates_li: list):
         total_days, count = 0,0
         for obj in dates_li:
             dates = list(obj.values())
-            total_days += (_dateform(dates[1]) - _dateform(dates[0])).days
+            total_days += (_parsedates(dates[1]) - _parsedates(dates[0])).days
             count += 1
 
         if total_days: return ceil(total_days/count)
@@ -144,11 +150,11 @@ def execute_queries(sub_queries, limit=400):
 
 def get():
     queries = form_subqueries()
-    data, proc_times = execute_queries(queries)
-    data_np, proc_times_np = np.array(data), np.array(proc_times)
+    data, proc_times_data = execute_queries(queries)
+    data_np, proc_times_np = np.array(data), np.array(proc_times_data)
     data_np = data_np.reshape((-1, len(kpis.keys())))
 
-    proc_times_np = proc_times_np.reshape((-1, 3))
+    proc_times_np = proc_times_np.reshape((-1, len(proc_times)))
 
 
 
@@ -169,17 +175,18 @@ def get():
                     except ValueError as e:
                         print(e, f'These are the headers:{cols}\n and values that caused it: {row}')
     res_df.loc[:, [*kpis.keys()]] = data_np
-    res_df.loc[:, ['APP-ACC Days', 'ACC-APD Days', 'APD-RE Days']] = proc_times_np
+    res_df.loc[:, [*proc_times.keys()]] = proc_times_np
     res_df.fillna('', inplace=True)
     return res_df
 
 def getcrs(df):
     kpi_cols =  list(kpis.keys())
+    proc_times_cols =  list(proc_times.keys())
     for index in range(len(kpi_cols[:-1])):
         current = kpi_cols[index]
         nxt = kpi_cols[index+1]
         df[f'{current}-{nxt} %'] = df[nxt]/df[current]
-    df.drop(kpi_cols + ['APP-ACC Days', 'ACC-APD Days', 'APD-RE Days'], axis=1, inplace=True)
+    df.drop(kpi_cols + proc_times_cols, axis=1, inplace=True)
     df.fillna(0, inplace=True)
     df.replace([np.inf, -np.inf], 0, inplace=True)
     return df
