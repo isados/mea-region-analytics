@@ -40,12 +40,14 @@ kpis = {
     'ACC': 'date_an_signed',
     'APD': 'date_approved',
     'RE': 'date_realized',
+    'FI': 'experience_end_date',
 }
 
 proc_times = {
     'APP-ACC Days': 'an_signed_at',
     'ACC-APD Days': 'date_approved',
-    'APD-RE Days': 'date_realized'
+    'APD-RE Days': 'date_realized',
+    'RE-FI Days': 'experience_end_date'
     }
 
 ## Building Query (by forming sub-queries)
