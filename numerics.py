@@ -34,7 +34,6 @@ programs = {
 
 incoming = {True: 'opportunity_home_mc', False: 'person_home_mc'}
 
-
 kpis = {
     'APP': 'created_at',
     'ACC': 'date_an_signed',
@@ -65,7 +64,7 @@ def get_request_clause(date_field:str):
         date_field = "an_signed_at"
     
     cutoff_index = date_fields.index(date_field)
-    request_dates = "\n".join(date_fields[cutoff_index-1:cutoff_index+1])
+    dt_fields_torequest = "\n".join(date_fields[cutoff_index-1:cutoff_index+1])
 
     return """
         %s
@@ -73,14 +72,14 @@ def get_request_clause(date_field:str):
             %s
         }
     }
-    """ % (basic_clause, request_dates)
+    """ % (basic_clause, dt_fields_torequest)
     
 def _parsedates(date_str):
     """ Date2 - Date1 in days"""
     date_str = date_str[:-1] # Remove Timezone code
     return  datetime.fromisoformat(date_str)
 
-def _avgdays_btwn(dates_li: list):
+def _avg_num_days(dates_li: list):
     if dates_li:
         total_days, count = 0,0
         for obj in dates_li:
@@ -129,39 +128,38 @@ def execute_queries(sub_queries, limit=400):
     query getApplicationList {
     """
     query_bottom = "}"
-    result = []
-    process_times = []
+    overall_data = []
+    avg_proc_times = []
     print('Executing query...')
     start = time.perf_counter()
     for batch in range(0, len(sub_queries), limit):
         print(f'BATCH : {batch+1} - {batch+limit}')
         query = query_top + ",\n".join(sub_queries[batch: batch+limit]) + query_bottom
-        raw_data = run_query(query)
-        data = [d['paging']['total_items'] for d in raw_data.values()]
+        batch_raw_data = run_query(query)
 
-        for d in raw_data.values():
+        # Extract Performance Data
+        batch_data = [d['paging']['total_items'] for d in batch_raw_data.values()]
+        # Extract Process Times
+        for d in batch_raw_data.values():
             dates = d.get('data') # list of application-level data of datetimes
             if dates is None:
                 continue
-            # Process Times
-            avg_days = _avgdays_btwn(dates)
-            process_times.append(avg_days)
-        result += data
+            avg_days = _avg_num_days(dates)
+            avg_proc_times.append(avg_days)
+        overall_data += batch_data
     print(f'Time Taken for query: {time.perf_counter()-start:0.4f} seconds')
-    return result, process_times
+    return overall_data, avg_proc_times
 
 def get():
     queries = form_subqueries()
-    data, proc_times_data = execute_queries(queries)
-    data_np, proc_times_np = np.array(data), np.array(proc_times_data)
-    data_np = data_np.reshape((-1, len(kpis.keys())))
+    perf_data, proc_times_data = execute_queries(queries)
+    perf_data_np, proc_times_np = np.array(perf_data), np.array(proc_times_data)
+    perf_data_np = perf_data_np.reshape((-1, len(kpis.keys())))
 
     proc_times_np = proc_times_np.reshape((-1, len(proc_times)))
 
-
-
-    cols = ['month', 'mc', 'department']
-    res_df = pd.DataFrame(columns=cols)
+    main_cols = ['month', 'mc', 'department']
+    res_df = pd.DataFrame(columns=main_cols)
 
     for month_str in months.keys():
         for mc in countries:
@@ -175,8 +173,8 @@ def get():
                     try:
                         res_df.loc[len(res_df.index)] = row
                     except ValueError as e:
-                        print(e, f'These are the headers:{cols}\n and values that caused it: {row}')
-    res_df.loc[:, [*kpis.keys()]] = data_np
+                        print(e, f'These are the headers:{main_cols}\n and values that caused it: {row}')
+    res_df.loc[:, [*kpis.keys()]] = perf_data_np
     res_df.loc[:, [*proc_times.keys()]] = proc_times_np
     res_df.fillna('', inplace=True)
     return res_df
