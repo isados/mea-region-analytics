@@ -50,14 +50,13 @@ def main():
 
     if 'opps' in RUN_THESE:
         print('# Updating Opp Portal Sheet #')
-        opp_df, backgrounds = opp.get()
-        print(backgrounds)
+        opp_df, backgrnds_df = opp.get()
         opp_sheet = workbook.worksheet_by_title(os.environ["OppsSheet"])
         backgrounds_sheet = workbook.worksheet_by_title(os.environ["ListofThings"])
         opp_sheet.clear()
         ### Push it to Google Sheets
         set_worksheet_todf(opp_sheet, opp_df)
-        set_list_of_backgrnds_todf(backgrounds_sheet, backgrounds)
+        set_list_of_backgrnds_todf(backgrounds_sheet, backgrnds_df)
 
     if 'numbers' in RUN_THESE:
         print('# Updating Performance Analytics Sheet #')

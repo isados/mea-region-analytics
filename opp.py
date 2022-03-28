@@ -41,7 +41,6 @@ query getOpportunitiesList {
 			}
 
 			date_opened
-            earliest_start_date
 			is_global_project
 			sdg_info {
 				sdg_target {
@@ -87,8 +86,26 @@ def get():
             collect.append(backgrnd)
         return ', '.join(collect)
 
+    def splitup_slots(slots):
+        return [s['start_date'] for s in slots]
+    
+            
+
+
     res_df['backgrounds'] = res_df['backgrounds'].apply(reduce_bakgrounds)
     back_df = pd.DataFrame(backgrounds, columns=['Background']).sort_values('Background')
+
+    # Split up all_slots column into Slot 1, Slot 2, ....
+    col_to_split = 'all_slots_nodes'
+    split_up_df = pd.DataFrame(res_df[col_to_split].apply(splitup_slots).tolist())
+    res_df.drop(col_to_split, axis=1, inplace=True)
+    cols_to_add = [f'Slot #{i+1}' for i in range(split_up_df.shape[1])]
+    res_df[cols_to_add] = split_up_df
+
+    res_df.fillna('', inplace=True)
+
+    
+    
     
     
 
