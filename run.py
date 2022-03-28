@@ -3,13 +3,14 @@
 import os
 import tempfile
 import numerics
+import opp
 import pygsheets
 import pandas as pd
 from functools import partial
 from utils import write_base64str_obj_to_file
 
-# numbers, covid 
-RUN_THESE = ['numbers']
+# numbers, covid, opps
+RUN_THESE = ['opps']
 def main():
     # Get credentials from service-account-file to access Google Sheets
     print("Creating temporary file for service account credentials...")
@@ -24,6 +25,7 @@ def main():
     workbook = gc.open_by_key(os.environ["SPREADSHEET_ID"])
     # Create handy function to write to sheets
     set_worksheet_todf = partial(pygsheets.Worksheet.set_dataframe, start="A1", copy_head=True)
+    set_list_of_backgrnds_todf = partial(pygsheets.Worksheet.set_dataframe, start="E2", copy_head=False)
 
     if 'covid' in RUN_THESE:
         print('# Updating COVID Sheet #')
@@ -45,6 +47,17 @@ def main():
 
         ### Push it to Google Sheets
         set_worksheet_todf(owid_covid_sheet, owid)
+
+    if 'opps' in RUN_THESE:
+        print('# Updating Opp Portal Sheet #')
+        opp_df, backgrounds = opp.get()
+        print(backgrounds)
+        opp_sheet = workbook.worksheet_by_title(os.environ["OppsSheet"])
+        backgrounds_sheet = workbook.worksheet_by_title(os.environ["ListofThings"])
+        opp_sheet.clear()
+        ### Push it to Google Sheets
+        set_worksheet_todf(opp_sheet, opp_df)
+        set_list_of_backgrnds_todf(backgrounds_sheet, backgrounds)
 
     if 'numbers' in RUN_THESE:
         print('# Updating Performance Analytics Sheet #')
