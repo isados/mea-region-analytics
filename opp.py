@@ -41,7 +41,6 @@ query getOpportunitiesList {
 			}
 
 			date_opened
-			is_global_project
 			sdg_info {
 				sdg_target {
 					Goal: goal_index

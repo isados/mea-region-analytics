@@ -8,9 +8,10 @@ import pygsheets
 import pandas as pd
 from functools import partial
 from utils import write_base64str_obj_to_file
+from datetime import datetime
 
 # numbers, covid, opps
-RUN_THESE = ['opps']
+RUN_THESE = ['opps', 'covid', 'numbers']
 def main():
     # Get credentials from service-account-file to access Google Sheets
     print("Creating temporary file for service account credentials...")
@@ -70,6 +71,12 @@ def main():
         set_worksheet_todf(perf_sheet, perf_df)
         set_worksheet_todf(crs_sheet, crs_df)
 
+    status_sheet = workbook.worksheet_by_title(os.environ["StatusUpdateSheet"])
+    status_sheet.clear()
+    status_df = pd.DataFrame(data={
+            'Last Update': [datetime.now().isoformat()]
+            })
+    set_worksheet_todf(status_sheet, status_df)
     print("Done!")
 
 if __name__ == "__main__":

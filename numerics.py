@@ -9,17 +9,17 @@ from query import run_query
 
 ## DATA Definition
 months = {'Jan': 1,
-# 'Feb': 2,
-# 'Mar': 3,
-# 'Apr': 4,
-# 'May': 5,
-# 'Jun': 6,
-# 'Jul': 7,
-# 'Aug': 8,
-# 'Sep': 9,
-# 'Oct': 10,
-# 'Nov': 11,
-# 'Dec': 12
+'Feb': 2,
+'Mar': 3,
+'Apr': 4,
+'May': 5,
+'Jun': 6,
+'Jul': 7,
+'Aug': 8,
+'Sep': 9,
+'Oct': 10,
+'Nov': 11,
+'Dec': 12
 }
 
 # {"name": "MEA", "id": "1632"},
@@ -28,8 +28,8 @@ with open('mea_countries.json') as file:
 
 programs = {
     'GTe': 9,
-    # 'GTa': 8,
-    # 'GV': 7
+    'GTa': 8,
+    'GV': 7
 }
 
 incoming = {True: 'opportunity_home_mc', False: 'person_home_mc'}
@@ -84,8 +84,12 @@ def _avg_num_days(dates_li: list):
         total_days, count = 0,0
         for obj in dates_li:
             dates = list(obj.values())
-            total_days += (_parsedates(dates[1]) - _parsedates(dates[0])).days
-            count += 1
+            try:
+                total_days += (_parsedates(dates[1]) - _parsedates(dates[0])).days
+                count += 1
+            except TypeError as e:
+                print(e)
+                print('Ignoring that date')
 
         if total_days: return ceil(total_days/count)
         else: return None
@@ -123,7 +127,7 @@ def form_subqueries():
     return sub_queries
                     
 
-def execute_queries(sub_queries, limit=400):
+def execute_queries(sub_queries, limit=300):
     query_top = """
     query getApplicationList {
     """
