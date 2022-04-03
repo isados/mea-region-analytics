@@ -12,6 +12,7 @@ from datetime import datetime
 
 # numbers, covid, opps
 RUN_THESE = ['opps', 'covid', 'numbers']
+RUN_THESE = ['opps', 'covid']
 def main():
     # Get credentials from service-account-file to access Google Sheets
     print("Creating temporary file for service account credentials...")
