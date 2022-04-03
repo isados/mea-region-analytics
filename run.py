@@ -12,7 +12,6 @@ from datetime import datetime
 
 # numbers, covid, opps
 RUN_THESE = ['opps', 'covid', 'numbers']
-RUN_THESE = ['opps', 'covid']
 def main():
     # Get credentials from service-account-file to access Google Sheets
     print("Creating temporary file for service account credentials...")
@@ -75,7 +74,7 @@ def main():
     status_sheet = workbook.worksheet_by_title(os.environ["StatusUpdateSheet"])
     status_sheet.clear()
     status_df = pd.DataFrame(data={
-            'Last Update': [datetime.now().isoformat()]
+            'Last Update': [datetime.now().isoformat() + ' UTC']
             })
     set_worksheet_todf(status_sheet, status_df)
     print("Done!")
