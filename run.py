@@ -3,6 +3,7 @@
 import os
 import tempfile
 import numerics
+from numerics import months
 import opp
 import pygsheets
 import pandas as pd
@@ -63,13 +64,23 @@ def main():
         print('# Updating Performance Analytics Sheet #')
         perf_df = numerics.get()
         crs_df = numerics.getcrs(perf_df.copy())
+
+        # Combine both dataframes
+        cols_to_join_on = ['month', 'mc', 'department']
+        whole_df = perf_df.merge(crs_df,
+                        on=cols_to_join_on,
+                        copy=False)
+
+        # To order the columns and filter them, add this column
+        def month_to_num(m):
+            date_month = str(months[m]).rjust(2, '0')
+            return date_month
+        whole_df['month_as_num'] = whole_df['month'].apply(month_to_num)
+
         perf_sheet = workbook.worksheet_by_title(os.environ["PerformanceSheet"])
-        crs_sheet = workbook.worksheet_by_title(os.environ["ConversionsSheet"])
         perf_sheet.clear()
-        crs_sheet.clear()
         ### Push it to Google Sheets
-        set_worksheet_todf(perf_sheet, perf_df)
-        set_worksheet_todf(crs_sheet, crs_df)
+        set_worksheet_todf(perf_sheet, whole_df)
 
     status_sheet = workbook.worksheet_by_title(os.environ["StatusUpdateSheet"])
     status_sheet.clear()
