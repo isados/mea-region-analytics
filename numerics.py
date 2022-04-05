@@ -180,6 +180,13 @@ def get():
                         print(e, f'These are the headers:{main_cols}\n and values that caused it: {row}')
     res_df.loc[:, [*kpis.keys()]] = perf_data_np
     res_df.loc[:, [*proc_times.keys()]] = proc_times_np
+
+    # To order the columns and filter them
+    def month_to_num(m):
+        date_month = str(months[m]).rjust(2, '0')
+        return date_month
+    res_df['month_as_num'] = res_df['month'].apply(month_to_num)
+
     res_df.fillna('', inplace=True)
     return res_df
 
