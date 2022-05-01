@@ -91,8 +91,8 @@ def main():
         set_worksheet_todf(perf_sheet, whole_df)
     if 'nps' in RUN_THESE:
 
-        dates = [{'name':'Fruit', 'value': ('2022-01-01', '2022-06-30')},
-                {'name': 'Fish', 'value': ('2022-07-01', '2022-12-31')}
+        dates = [{'name':'Fish 2022', 'value': ('2022-07-01', '2022-12-31')},
+                {'name': 'Fruit 2023', 'value': ('2023-01-01', '2023-06-30')}
             ]
         
         programs = [
