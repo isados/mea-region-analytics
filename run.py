@@ -10,7 +10,6 @@ import asyncio
 import aiohttp
 import time
 import numerics
-from numerics import months
 import opp
 import pygsheets
 import numpy as np
@@ -34,7 +33,7 @@ def main():
 
     workbook = gc.open_by_key(os.environ["SPREADSHEET_ID"])
     # Create handy function to write to sheets
-    set_worksheet_todf = partial(pygsheets.Worksheet.set_dataframe, start="A1", copy_head=True)
+    set_worksheet_todf = partial(pygsheets.Worksheet.set_dataframe, start="A1", copy_head=True, extend=True)
     set_opps_worksheet_todf = partial(pygsheets.Worksheet.set_dataframe, start="B5", copy_head=True)
     set_list_of_backgrnds_todf = partial(pygsheets.Worksheet.set_dataframe, start="E2", copy_head=False)
 
@@ -74,16 +73,31 @@ def main():
         crs_df = numerics.getcrs(perf_df.copy())
 
         # Combine both dataframes
-        cols_to_join_on = ['month', 'mc', 'department']
+        cols_to_join_on = ['year', 'month', 'mc', 'department']
         whole_df = perf_df.merge(crs_df,
                         on=cols_to_join_on,
                         copy=False)
 
         # To order the columns and filter them, add this column
-        def month_to_num(m):
+        months = {'Jan': 1,
+        'Feb': 2,
+        'Mar': 3,
+        'Apr': 4,
+        'May': 5,
+        'Jun': 6,
+        'Jul': 7,
+        'Aug': 8,
+        'Sep': 9,
+        'Oct': 10,
+        'Nov': 11,
+        'Dec': 12
+        }
+        def month_to_num(row):
+            m = row['month']
             date_month = str(months[m]).rjust(2, '0')
-            return date_month
-        whole_df['month_as_num'] = whole_df['month'].apply(month_to_num)
+            return f"{row['year']}-{date_month}-01"
+
+        whole_df['month_as_num'] = whole_df.apply(month_to_num, axis=1)
 
         perf_sheet = workbook.worksheet_by_title(os.environ["PerformanceSheet"])
         perf_sheet.clear()

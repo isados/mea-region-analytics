@@ -8,19 +8,28 @@ from datetime import datetime
 from query import run_query
 
 ## DATA Definition
-months = {'Jan': 1,
-'Feb': 2,
-'Mar': 3,
-'Apr': 4,
-'May': 5,
-'Jun': 6,
-'Jul': 7,
-'Aug': 8,
-'Sep': 9,
-'Oct': 10,
-'Nov': 11,
-'Dec': 12
-}
+PERIODS = (
+    (('Jan', 1), '2022'),
+    (('Feb', 2), '2022'),
+    (('Mar', 3), '2022'),
+    (('Apr', 4), '2022'),
+    (('May', 5), '2022'),
+    (('Jun', 6), '2022'),
+    (('Jul', 7), '2022'),
+    (('Aug', 8), '2022'),
+    (('Sep', 9), '2022'),
+    (('Oct', 10), '2022'),
+    (('Nov', 11), '2022'),
+    (('Dec', 12), '2022'),
+    (('Jan', 1), '2023'),
+    (('Feb', 2), '2023'),
+    (('Mar', 3), '2023'),
+    (('Apr', 4), '2023'),
+    (('May', 5), '2023'),
+    (('Jun', 6), '2023'),
+    (('Jul', 7), '2023'),
+)
+LAST_PERIOD = (('Aug', 8), '2023')
 
 # {"name": "MEA", "id": "1632"},
 with open('mea_countries.json') as file:
@@ -99,10 +108,18 @@ def _avg_num_days(dates_li: list):
 def form_subqueries():
     sub_queries = []
     index = 0
-    for month_num in months.values():
-        start_month = str(month_num).rjust(2, '0')
-        next_month = (month_num + 1) % 12 or 12
-        end_month = str(next_month).rjust(2, '0')
+    for index, period in enumerate(PERIODS):
+        month_num = period[0][1]
+        year = period[1]
+        start_month = f"{year}-{str(month_num).rjust(2, '0')}"
+
+        if index+1 == len(PERIODS):
+            next_period = LAST_PERIOD
+        else:
+            next_period = PERIODS[index+1]
+        month_num = next_period[0][1]
+        year = next_period[1]
+        end_month = f"{year}-{str(month_num).rjust(2, '0')}"
 
         for mc in countries:
             for p_id in programs.values():
@@ -110,7 +127,7 @@ def form_subqueries():
                     for kpi_query in kpis.values():
                         sub_query = """
                             %s: allOpportunityApplication(
-                                filters: {%s: {from: "2022-%s-01", to: "2022-%s-01"}
+                                filters: {%s: {from: "%s-01", to: "%s-01"}
 
                                 # Function
                                 programmes: [%i]
@@ -162,10 +179,12 @@ def get():
 
     proc_times_np = proc_times_np.reshape((-1, len(proc_times)))
 
-    main_cols = ['month', 'mc', 'department']
+    main_cols = ['year', 'month', 'mc', 'department']
     res_df = pd.DataFrame(columns=main_cols)
 
-    for month_str in months.keys():
+    for period in PERIODS:
+        month_str = period[0][0]
+        year_str = period[1]
         for mc in countries:
             for p_name in programs.keys():
                 for in_ in incoming.keys():
@@ -173,7 +192,7 @@ def get():
                     dept += p_name
 
                     # Build Row
-                    row = [month_str, mc['name'], dept]
+                    row = [year_str, month_str, mc['name'], dept]
                     try:
                         res_df.loc[len(res_df.index)] = row
                     except ValueError as e:
