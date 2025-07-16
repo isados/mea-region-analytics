@@ -1,0 +1,66 @@
+query getApplicationList ($limit: Int, $page: Int, $mc_ids: [Int], $start_date: DateTime, $end_date: DateTime){
+allOpportunityApplication(pagination:{per_page: $limit, page:$page},
+                filters: {created_at: {from: $start_date, to: $end_date},
+                                    sort: created_at, sort_direction:asc,
+                person_home_mc:$mc_ids, opportunity_home_mc:$mc_ids}) {
+                    paging {
+                        total_items
+                        current_page
+                        total_pages
+                    }
+    data {
+        id
+        status
+                            
+        created_at
+        date_matched
+        date_pay_by_cash
+        date_approved
+        date_realized
+        experience_start_date
+        experience_end_date
+        nps_response_completed_at
+        date_approval_broken
+        slot {
+            start_date
+            end_date
+        }
+                            
+                            
+                                
+        person {
+            id
+        
+            home_mc {
+                name
+                id
+            }
+        
+        }
+        
+        host_mc: home_mc {
+            name
+            id
+        }
+        opportunity {
+            id
+            created_at
+            date_opened
+            title
+            duration
+            sub_product {
+            name
+            }
+            programme {
+            short_name_display
+            }
+                                    
+        }
+
+    }
+                    
+                        
+                        
+    }
+}
+

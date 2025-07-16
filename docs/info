@@ -1,0 +1,16 @@
+we can have # of slots and # of openings / slot for each oppp
+
+having current KPI numbers might also be needed. current APP, ACC, APD
+
+we need to make the query doesn't fail due to time out error
+make sure that the MC name is dynamic and changes based on time period. right now, all apps are created with MEA as the country name
+the slot start and end dates belonging to opportunityapplicatoins, started being adding around 2021
+
+
+1. Steps for "Numbers"
+    a. build a function for pulling data:
+        i. handle many pages, so should be able to make multiple requests, ensuring that first MC comes first
+        ii. filter based on opportunity & home MC, so 2 different requests
+        iii. find GT
+        
+    b

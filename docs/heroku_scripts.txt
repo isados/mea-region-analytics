@@ -1,0 +1,1 @@
+heroku run -a expa-bh-analystics ./run.py
